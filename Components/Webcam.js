@@ -5,5 +5,6 @@ class Webcam {
     }
     capture() {
         this.image = video.get();
+        this.on = false;
     }
 }
