@@ -24,9 +24,7 @@ class Painter {
     displayWebcamCapture() {
         const position = skeleton.getPosition(0, 0);
         if (webcam.on) {
-            // show the live webcam
-            let webcamCapture = video.get();
-            image(webcamCapture, position.x, position.y, skeleton.grid.width, skeleton.grid.height);
+            this.displayLiveWebcam(skeleton.getPosition(0, 0));
         }
         else {
             image(webcam.image, position.x, position.y, skeleton.grid.width, skeleton.grid.height);
@@ -65,17 +63,26 @@ class Painter {
         image(blueThresholded, skeleton.getPosition(2, 2).x, skeleton.getPosition(2, 2).y, skeleton.grid.width, skeleton.grid.height);
     }
 
+    displayLiveWebcam(position) {
+        let webcamCapture = webcam.video.get();
+        image(webcamCapture, position.x, position.y, skeleton.grid.width, skeleton.grid.height);
+    }
+
     draw() {
         // Row 0, Col 0: webcam image
         this.displayWebcamCapture();
+        if (webcam.image) {
+            // Row 0, Col 1: grayscale image & brightness +20%
+            this.displayGrayScaleBrightness();
 
-        if (!webcam.image) return;
+            // Row 1, Col 0-2: RGB channels
+            const spliedImages = this.displayRGBChannels();
 
-        // Row 0, Col 1: grayscale image & brightness +20%
-        this.displayGrayScaleBrightness();
-        // Row 1, Col 0-2: RGB channels
-        const spliedImages = this.displayRGBChannels();
-        // Row 2, Col 0-2: thresholding for RGB channels
-        this.displayThresholding(spliedImages);
+            // Row 2, Col 0-2: thresholding for RGB channels
+            this.displayThresholding(spliedImages);
+
+        }
+        // Row 3, Co1 0: live webcam
+        this.displayLiveWebcam(skeleton.getPosition(3, 0));
     }
 }
